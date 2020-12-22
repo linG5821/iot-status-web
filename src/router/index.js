@@ -76,6 +76,18 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/iot-status',
+    component: Layout,
+    children: [
+      {
+        path: 'client-states',
+        name: 'ClientStates',
+        component: () => import('@/views/client-states/index'),
+        meta: { title: '客户端收发数据统计', icon: 'table' }
+      }
+    ]
+  },
 
   {
     path: '/form',
