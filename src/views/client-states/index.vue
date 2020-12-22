@@ -22,6 +22,7 @@
       border
       fit
       highlight-current-row
+      @sort-change="sortChange"
     >
       <el-table-column
         align="center"
@@ -32,42 +33,42 @@
           {{ scope.row.clientId }}
         </template>
       </el-table-column>
-      <el-table-column label="接收的TCP报文数">
+      <el-table-column prop="receivedTcpPacketsCount" label="接收的TCP报文数" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.receivedTcpPacketsCount }}
         </template>
       </el-table-column>
-      <el-table-column label="接收的PUBLISH报文数">
+      <el-table-column prop="receivedPublishPacketsCount" label="接收的PUBLISH报文数" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.receivedPublishPacketsCount }}
         </template>
       </el-table-column>
-      <el-table-column label="接收的字节数量">
+      <el-table-column prop="receivedBytesCount" label="接收的字节数量" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.receivedBytesCount }}
         </template>
       </el-table-column>
-      <el-table-column label="接收的MQTT报文数">
+      <el-table-column prop="receivedMqttPacketsCount" label="接收的MQTT报文数" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.receivedMqttPacketsCount }}
         </template>
       </el-table-column>
-      <el-table-column label="发送的TCP报文数">
+      <el-table-column prop="sentTcpPacketsCount" label="发送的TCP报文数" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.sentTcpPacketsCount }}
         </template>
       </el-table-column>
-      <el-table-column label="发送的PUBLISH报文数">
+      <el-table-column prop="sentPublishPacketsCount" label="发送的PUBLISH报文数" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.sentPublishPacketsCount }}
         </template>
       </el-table-column>
-      <el-table-column label="发送的字节数量">
+      <el-table-column prop="sentBytesCount" label="发送的字节数量" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.sentBytesCount }}
         </template>
       </el-table-column>
-      <el-table-column label="发送的MQTT报文数量">
+      <el-table-column prop="sentMqttPacketsCount" label="发送的MQTT报文数量" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.sentMqttPacketsCount }}
         </template>
@@ -144,6 +145,16 @@ export default {
     this.fetchData()
   },
   methods: {
+    sortChange(params) {
+      console.log("aaa");
+      let {column,prop,order} = params
+      this.sort = prop
+      this.direction = order == 'descending' ? 'DESC' : 'ASC'
+      if (column == null) {
+        this.sort = 'receivedPublishPacketsCount'
+      }
+      this.fetchData()
+    },
     fetchData() {
       this.listLoading = true
       getClientStates({
