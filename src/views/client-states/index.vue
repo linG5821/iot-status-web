@@ -1,5 +1,20 @@
 <template>
   <div class="app-container">
+    <div class="block">
+      <el-date-picker
+        v-model="dates"
+        type="daterange"
+        align="right"
+        unlink-panels
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd"
+        :picker-options="pickerOptions"
+        :default-time="['00:00:00', '23:59:59']"
+        @change="fetchData"
+      />
+    </div>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -8,7 +23,11 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="客户端ID" width="160">
+      <el-table-column
+        align="center"
+        label="客户端ID"
+        width="160"
+      >
         <template slot-scope="scope">
           {{ scope.row.clientId }}
         </template>
@@ -86,7 +105,39 @@ export default {
       pageSize: 10,
       pageNum: 1,
       total: 0,
-      listLoading: true
+      listLoading: true,
+      sort: 'receivedPublishPacketsCount',
+      direction: 'DESC',
+      dates: this.handleDefaultDate(),
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      }
     }
   },
   created() {
@@ -96,10 +147,10 @@ export default {
     fetchData() {
       this.listLoading = true
       getClientStates({
-        startDate: '2020-12-18',
-        endDate: '2020-12-19',
-        sort: 'receivedPublishPacketsCount',
-        direction: 'DESC',
+        startDate: this.dates[0],
+        endDate: this.dates[1],
+        sort: this.sort,
+        direction: this.direction,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }).then(response => {
@@ -117,6 +168,12 @@ export default {
     handleSizeChange(val) {
       this.pageSize = val
       this.fetchData()
+    },
+    handleDefaultDate() {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 3)
+      return [start, end]
     }
   }
 }
